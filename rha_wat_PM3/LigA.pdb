@@ -1,0 +1,24 @@
+CRYST1   74.616  104.757  114.292  90.00 107.96  90.00 P 1 21 1      1
+HETATM    1  C1  RNS A2001      15.246  32.817  67.685  1.00 23.05           C  
+HETATM    2  O1  RNS A2001      16.292  32.875  68.337  1.00 17.55           O  
+HETATM    3  C2  RNS A2001      14.857  31.516  66.995  1.00 23.41           C  
+HETATM    4  O2  RNS A2001      15.997  30.930  66.389  1.00 26.61           O  
+HETATM    5  C3  RNS A2001      13.780  31.763  65.940  1.00 24.93           C  
+HETATM    6  O3  RNS A2001      13.653  30.603  65.126  1.00 24.46           O  
+HETATM    7  C4  RNS A2001      14.108  32.980  65.067  1.00 26.95           C  
+HETATM    8  O4  RNS A2001      15.458  32.916  64.630  1.00 29.90           O  
+HETATM    9  C5  RNS A2001      13.183  33.032  63.855  1.00 27.57           C  
+HETATM   10  O5  RNS A2001      11.827  33.021  64.277  1.00 25.72           O  
+HETATM   11  C6  RNS A2001      13.462  34.302  63.065  1.00 28.50           C  
+CONECT    1    2    3
+CONECT    2    1
+CONECT    3    1    4    5
+CONECT    4    3
+CONECT    5    3    6    7
+CONECT    6    5
+CONECT    7    5    8    9
+CONECT    8    7
+CONECT    9    7   10   11
+CONECT   10    9
+CONECT   11    9
+END
