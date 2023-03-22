@@ -1,0 +1,162 @@
+&GLOBAL
+  PROJECT METADYN
+  PRINT_LEVEL LOW
+  RUN_TYPE MD
+&END GLOBAL
+
+&FORCE_EVAL
+  METHOD QMMM
+  STRESS_TENSOR ANALYTICAL
+  &DFT
+    CHARGE 0
+    &QS
+      METHOD AM1
+      &SE
+         &COULOMB
+           CUTOFF [angstrom] 10.0
+         &END
+         &EXCHANGE
+           CUTOFF [angstrom] 10.0
+         &END
+      &END
+    &END QS
+    &SCF
+      MAX_SCF 30
+      EPS_SCF 1.0E-6
+      SCF_GUESS ATOMIC
+      &OT
+        MINIMIZER DIIS
+        PRECONDITIONER FULL_SINGLE_INVERSE
+      &END
+      &OUTER_SCF
+        EPS_SCF 1.0E-6
+        MAX_SCF 10
+      &END
+      &PRINT
+        &RESTART OFF
+        &END
+        &RESTART_HISTORY OFF
+        &END
+      &END
+    &END SCF
+  &END DFT
+  &MM
+    &FORCEFIELD
+      PARMTYPE AMBER
+      PARM_FILE_NAME complex_LJ_mod.prmtop
+      &SPLINE
+        EMAX_SPLINE 1.0E8
+        RCUT_NB [angstrom] 10
+      &END SPLINE
+    &END FORCEFIELD
+    &POISSON
+      &EWALD
+        EWALD_TYPE SPME
+        ALPHA .40
+        GMAX 80
+      &END EWALD
+    &END POISSON
+  &END MM
+  &SUBSYS
+    &CELL
+      ABC [angstrom] 98.9300037970 98.8462388104 98.6466250873
+      ALPHA_BETA_GAMMA 90 90 90
+    &END CELL
+    &TOPOLOGY
+      CONN_FILE_FORMAT AMBER
+      CONN_FILE_NAME complex_LJ_mod.prmtop
+    &END TOPOLOGY
+   &KIND NA+
+     ELEMENT Na
+    &END KIND
+    &KIND ZN2+
+     ELEMENT Zn
+    &END KIND
+    &COLVAR
+       &DISTANCE_FUNCTION
+          COEFFICIENT -1
+          ATOMS  3012 2997 3005 2988
+       &END DISTANCE_FUNCTION
+       &END COLVAR
+  &END SUBSYS
+  &QMMM
+    ECOUPL COULOMB
+    &CELL
+      ABC 40 40 40
+      ALPHA_BETA_GAMMA 90 90 90
+    &END CELL
+    &QM_KIND O
+      MM_INDEX 2990 2991 2992 2993 2994 2995 2996 2997 2998 
+    &END QM_KIND
+    &QM_KIND P
+      MM_INDEX 2999
+    &END QM_KIND
+    &QM_KIND C
+      MM_INDEX 2984 2985 2986 2987 2988 2989
+    &END QM_KIND
+    &QM_KIND H
+      MM_INDEX 3000 3001 3002 3003 3004 3005 3006 3007 3008 3009 3010 3011 3012 
+    &END QM_KIND
+
+  &END QMMM
+&END FORCE_EVAL
+
+&MOTION
+  &MD
+  ENSEMBLE NVT
+  TIMESTEP [fs] 0.5
+  STEPS    60000  !30000 fs = 30 ps
+  TEMPERATURE 298
+  &THERMOSTAT
+    TYPE NOSE
+    REGION GLOBAL
+    &NOSE
+      TIMECON [fs] 100.
+    &END NOSE
+  &END THERMOSTAT
+  &END MD
+  &FREE_ENERGY
+    METHOD METADYN
+    &METADYN
+      DO_HILLS  .TRUE.
+      NT_HILLS 100
+      WW [kcalmol] 1.5
+      &METAVAR
+        WIDTH 0.5 !Also known as scale
+        COLVAR 1
+      &END METAVAR
+    &PRINT
+        &COLVAR
+           COMMON_ITERATION_LEVELS 3
+           &EACH
+             MD 10
+           &END
+        &END
+      &END
+    &END METADYN
+  &END FREE_ENERGY
+
+   &PRINT
+    &RESTART                                    ! This section controls the printing of restart files
+      &EACH                                     ! A restart file will be printed every 10000 md steps
+        MD 5000
+      &END
+    &END
+    &RESTART_HISTORY                            ! This section controls dumping of unique restart files during the run keeping all of them.Most useful if recovery is needed at a later point.
+      &EACH                                     ! A new restart file will be printed every 10000 md steps
+        MD 5000
+      &END
+    &END
+    &TRAJECTORY                                 ! Thes section Controls the output of the trajectory
+      FORMAT XYZ                                ! Format of the output trajectory is XYZ
+      &EACH                                     ! New trajectory frame will be printed each 100 md steps
+        MD 1000
+      &END
+    &END
+  &END PRINT
+&END MOTION
+
+&EXT_RESTART
+  RESTART_FILE_NAME MONITOR-1.restart
+  RESTART_COUNTERS .FALSE.
+&END
